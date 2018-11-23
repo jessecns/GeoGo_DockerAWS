@@ -11,8 +11,8 @@ Alternatively, you can follow along to this youtube tutorial http://........
 - Launch docker-compose to run container on AWS 
 
 
-<h2>Instructions</h2>
-<h3>CloudFormation Stack</h3>
+## Instructions
+### CloudFormation Stack
 1. Clone github repository to a new directory on local machine
 2. Create EC2 key pair in AWS management console and save to project folder dir
 3. Open GGEO_fullstack.yml and replace the MyKeyName parameter with your KeyName (line 26)
@@ -21,11 +21,11 @@ Alternatively, you can follow along to this youtube tutorial http://........
 6. Open RDS instance on console, save RDS endpoint address to text file.
 7. Open EC2 instance next, and save Public IP address and Public DNS address.
 
-<h3>Edit .env values</h3>
+### Edit .env values
 1. Open .env.example file in text editor and rename file to .env
 2. Replace aws_s3_access_key_id and aws_s3_secret_access_key with the values from CloudFormation Outputs
 3. Replace RDS Host with RDS endpoint obtained from previous step.
 4. (optional) Replace django_key with a random secret key that can be generated from https://www.miniwebtool.com/django-secret-key-generator/
 5. Save changes and exit .env
 
-<h3> Docker Image and Docker Hub </h3>
+### Docker Image and Docker Hub

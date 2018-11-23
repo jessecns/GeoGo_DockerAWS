@@ -1,0 +1,225 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description:
+  CloudFormation custom template for deployment of AWS full stack for COMP6905 Final Term Project. Resources include EC2 instances, Security Groups, RDS for MySQL, Elastic IP, AutoScaling Groups and CloudWatch
+
+Parameters:
+
+  AvailabilityZones:
+    Type: CommaDelimitedList
+    Default: us-east-1a
+
+  AWSRegion:
+    Type: String
+    Default: us-east-1
+
+  InstanceType:
+    Type: String
+    Default: t2.micro
+
+  MyKeyName:
+    Type: String
+    Default: geogo-comp6905   #Enter your keypair here 
+
+
+Resources:
+    GGEOInstance:
+      Type: AWS::EC2::Instance
+      Properties:
+          AvailabilityZone: us-east-1a
+          ImageId: ami-0ac019f4fcb7cb7e6  #ubuntu server 16.04 LTS, free tier eligible in us-east-1a
+          InstanceType: !Ref InstanceType #References instancetype parameter
+          KeyName: !Ref MyKeyName  #References keypair parameter
+          SecurityGroups:
+            - !Ref GGEOSecurityGroup
+          UserData: !Base64 |
+            #!/bin/bash
+            sudo apt-get update -qq
+            sudo apt-get install -y apt-transport-https ca-certificates
+            sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+            sudo echo "deb https://apt.dockerproject.org/repo ubuntu-xenial main" | tee /etc/apt/sources.list.d/docker.list
+            sudo apt-get update -qq
+            sudo apt-get purge lxc-docker || true
+            sudo apt-get -y install linux-image-extra-$(uname -r) linux-image-extra-virtual
+            sudo apt-get -y install docker-engine
+            sudo usermod -aG docker ubuntu
+            sudo mkdir -p /etc/systemd/system/docker.service.d
+            sudo printf "[Service]\nExecStart=\nExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:2375\n" >>  /etc/systemd/system/docker.service.d/docker.conf
+            sudo systemctl daemon-reload
+            sudo systemctl restart docker
+
+    GGEOSecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+          GroupDescription: Enable http access via port 80, 22, 2375
+          SecurityGroupIngress:
+          - IpProtocol: tcp
+            FromPort: '80'
+            ToPort: '80'
+            CidrIp: 0.0.0.0/0
+          - IpProtocol: tcp
+            FromPort: '22'
+            ToPort: '22'
+            CidrIp: 0.0.0.0/0
+          - IpProtocol: tcp
+            FromPort: '2375'
+            ToPort: '2375'
+            CidrIp: 0.0.0.0/0
+
+#Create ElasticIP
+    MyElasticIP:
+      Type: AWS::EC2::EIP
+      Properties:
+        InstanceId: !Ref GGEOInstance
+
+#Create postgres database instance and security group
+    MyDBInstance:
+      Type: AWS::RDS::DBInstance
+      Properties:
+          DBName: ggeo_db
+          Engine: postgres
+          MasterUsername: postgres
+          MasterUserPassword: postgres210
+          DBInstanceClass: db.t2.micro
+          AllocatedStorage: '5'
+          DBSecurityGroups:
+            - !Ref RDSSecurityGroup
+
+    RDSSecurityGroup:
+      Type: AWS::RDS::DBSecurityGroup
+      Properties:
+        GroupDescription: Security Group to enable public access to RDS
+        DBSecurityGroupIngress:
+         CIDRIP: 0.0.0.0/0
+
+# Create AutoScaling group
+    MyASG:
+      Type: AWS::AutoScaling::AutoScalingGroup
+      Properties:
+        AvailabilityZones: !Ref AvailabilityZones
+        LaunchConfigurationName: !Ref MyLaunchConfig
+        MinSize: "0"
+        MaxSize: "2"
+
+# Demand-based AutoScaling policies; scale up and scale down pair
+    ScaleUpPolicy:
+      Type: AWS::AutoScaling::ScalingPolicy
+      Properties:
+        AutoScalingGroupName: !Ref MyASG
+        AdjustmentType: ChangeInCapacity
+        Cooldown: '30'
+        ScalingAdjustment: '1'
+
+    ScaleDownPolicy:
+      Type: AWS::AutoScaling::ScalingPolicy
+      Properties:
+        AutoScalingGroupName: !Ref MyASG
+        AdjustmentType: ChangeInCapacity
+        Cooldown: '120'
+        ScalingAdjustment: '-1'
+
+# Fires an alarm when the average CPU utilization of an EC2 instance exceeds 70% for more than 60 seconds over three evaluation periods
+    CPUAlarmHigh:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        EvaluationPeriods: '3'
+        Statistic: Average
+        Threshold: '70'
+        AlarmDescription: Alarm if CPU > 70% for 60 seconds
+        Period: '60'
+        AlarmActions: [ !Ref ScaleUpPolicy ]
+        Namespace: AWS/EC2
+        ComparisonOperator: GreaterThanThreshold
+        MetricName: CPUUtilization
+        Dimensions:
+        - Name: AutoScalingGroupName
+          Value: !Ref MyASG
+
+    CPUAlarmLow:
+      Type: AWS::CloudWatch::Alarm
+      Properties:
+        EvaluationPeriods: '3'
+        Statistic: Average
+        Threshold: '20'
+        AlarmDescription: Alarm if CPU < 20% for 60 seconds
+        Period: '60'
+        AlarmActions: [ !Ref ScaleDownPolicy ]
+        Namespace: AWS/EC2
+        ComparisonOperator: LessThanThreshold
+        MetricName: CPUUtilization
+        Dimensions:
+        - Name: AutoScalingGroupName
+          Value: !Ref MyASG
+
+#Launch Config for AutoScaling setup
+    MyLaunchConfig:
+      Type: AWS::AutoScaling::LaunchConfiguration
+      Properties:
+        ImageId: ami-0ac019f4fcb7cb7e6  #same ubuntu ami as EC2
+        KeyName: !Ref MyKeyName
+        SecurityGroups:
+          - !Ref GGEOSecurityGroup
+        InstanceType: !Ref InstanceType
+        UserData: !Base64 |
+          #!/bin/bash
+          sudo apt-get update -qq
+          sudo apt-get install -y apt-transport-https ca-certificates
+          sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+          sudo echo "deb https://apt.dockerproject.org/repo ubuntu-xenial main" | tee /etc/apt/sources.list.d/docker.list
+          sudo apt-get update -qq
+          sudo apt-get purge lxc-docker || true
+          sudo apt-get -y install linux-image-extra-$(uname -r) linux-image-extra-virtual
+          sudo apt-get -y install docker-engine
+          sudo usermod -aG docker ubuntu
+          sudo mkdir -p /etc/systemd/system/docker.service.d
+          sudo printf "[Service]\nExecStart=\nExecStart=/usr/bin/dockerd -H fd:// -H tcp://0.0.0.0:2375\n" >>  /etc/systemd/system/docker.service.d/docker.conf
+          sudo systemctl daemon-reload
+          sudo systemctl restart docker
+
+#Create S3 bucket with bucket policy
+    S3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: geogo-static
+
+    BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref S3Bucket
+        PolicyDocument:
+          Statement:
+            - Action: 's3:GetObject'
+              Effect: Allow
+              Resource: !Sub 'arn:aws:s3:::${S3Bucket}/*'
+              Principal: '*'
+
+#In deploy command add the parameter --capabilities CAPABILITY_IAM to explicitly define the creation of IAM related resources.
+    S3User:
+      Type: AWS::IAM::User
+      Properties:
+        Policies:
+          - PolicyName: !Sub 'publish-to-${S3Bucket}'
+            PolicyDocument:
+              Statement:
+              - Action: 's3:*'
+                Effect: Allow
+                Resource:
+                - !Sub 'arn:aws:s3:::${S3Bucket}'
+                - !Sub 'arn:aws:s3:::${S3Bucket}/*'
+
+    PublishCredentials:
+      Type: AWS::IAM::AccessKey
+      Properties:
+        UserName: !Ref S3User
+
+#Outputs for S3 access key and secret access, retrieve after stack formed
+Outputs:
+    BucketName:
+      Description: 'S3 Bucket Name'
+      Value: !Ref S3Bucket
+    AccessKeyId:
+      Description: 'S3 Access Key'
+      Value: !Ref PublishCredentials
+    AccessKeySecret:
+      Description: 'S3 Secret Key'
+      Value: !GetAtt PublishCredentials.SecretAccessKey

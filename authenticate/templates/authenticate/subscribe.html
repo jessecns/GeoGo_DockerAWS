@@ -1,0 +1,20 @@
+{% extends 'authenticate/base.html' %}
+{% block content%}
+
+<h2 class="text-center">Select Your Plan</h2>
+</br>
+  <div class="col-md-3 offset-md-5">
+    {% if user.is_authenticated %}
+      <form class="form" method="POST" action="{% url 'subscribe_plan' %}">
+      {% csrf_token %}
+      {{ sub_form.as_p }}
+      <input type="submit" value="Save Changes" class="btn btn-secondary">
+    {% else %}
+        <div class="col-ml-2 offset-mr-2">
+        <p>Please Login First... <a href="{% url 'login' %}">Click Here</a></p>
+      </div>
+    {% endif %}
+    </form>
+  </div>
+
+{% endblock %}

@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+    djangoweb:
+      image: jessecns/ggeo-django
+      command: python manage.py runserver 0.0.0.0:8000
+      volumes:
+        - .:/code
+      ports:
+        - "80:8000"
+      environment:
+       - POSTGRES_DB=ggeo_db
+       - POSTGRES_USER=postgres
+       - POSTGRES_PASSWORD=${PG_password}
+       - POSTGRES_HOST=${RDS_host}

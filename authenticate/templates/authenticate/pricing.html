@@ -1,0 +1,143 @@
+{% extends 'authenticate/base.html' %}
+{% block content%}
+
+<h2 class="text-center">Subscription Plans</h2>
+<p class="text-center">Whether you're an organization, team, or individual, there's a GeoGo subscription for you.</p>
+<p class="text-center">Purchase the plan that suits you and upgrade at any time.</p>
+
+<style>
+.pricing .card {
+  border: none;
+  border-radius: 1rem;
+  transition: all 0.2s;
+  box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);
+}
+
+.pricing hr {
+  margin: 1.5rem 0;
+}
+
+.pricing .card-title {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  letter-spacing: .1rem;
+  font-weight: bold;
+}
+
+.pricing .card-price {
+  font-size: 3rem;
+  margin: 0;
+}
+
+.pricing .card-price .period {
+  font-size: 0.8rem;
+}
+
+.pricing ul li {
+  margin-bottom: 1rem;
+}
+
+.pricing .text-muted {
+  opacity: 0.7;
+}
+
+.pricing .btn {
+  font-size: 80%;
+  border-radius: 5rem;
+  letter-spacing: .1rem;
+  font-weight: bold;
+  padding: 1rem;
+  opacity: 0.7;
+  transition: all 0.2s;
+}
+
+/* Hover Effects on Card */
+
+@media (min-width: 992px) {
+  .pricing .card:hover {
+    margin-top: -.25rem;
+    margin-bottom: .25rem;
+    box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.3);
+  }
+  .pricing .card:hover .btn {
+    opacity: 1;
+  }
+}
+</style>
+
+<body>
+
+  <section class="pricing py-5">
+    <div class="container">
+      <div class="row">
+        <!-- Basic Tier -->
+        <div class="col-lg-4">
+          <div class="card mb-5 mb-lg-0">
+            <div class="card-body">
+              <h5 class="card-title text-muted text-uppercase text-center">Basic</h5>
+              <h6 class="card-price text-center">$15<span class="period">/month</span></h6>
+              <hr>
+              <ul class="fa-ul">
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Single User Access</li>
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Read Only Access to Spatial Datasets</li>
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Pre-Configured Pop-Ups and Map UI</li>
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Suitable for Non-Expert Users</li>
+                <li class="text-muted"><span class="fa-li"><i class="fas fa-times"></i></span>Vector Data Upload</li>
+                <li class="text-muted"><span class="fa-li"><i class="fas fa-times"></i></span>Tabular Data Upload</li>
+                <li class="text-muted"><span class="fa-li"><i class="fas fa-times"></i></span>Raster Data Upload</li>
+                <li class="text-muted"><span class="fa-li"><i class="fas fa-times"></i></span>Customizable Map UI, Functions, Widgets</li>
+              </ul>
+            </br>
+            <a href="{% url 'subscribe_plan' %}" class="btn btn-block btn-primary text-uppercase">Get Started with Basic</a>
+            </div>
+          </div>
+        </div>
+        <!-- Professional Tier -->
+        <div class="col-lg-4">
+          <div class="card mb-5 mb-lg-0">
+            <div class="card-body">
+              <h5 class="card-title text-muted text-uppercase text-center">Professional</h5>
+              <h6 class="card-price text-center">$55<span class="period">/month</span></h6>
+              <hr>
+              <ul class="fa-ul">
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Multi-User Access (Up to 10 editors)</li>
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Read/Write Privileges to Spatial Database</li>
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Scale Up to 2 Geoserver Instances Across One AZ</li>
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Suitable for Small-Medium Organizations</li>
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Vector Data Limit: 100 features</li>
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Tabular Data Limit: 100 features</li>
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Raster Data Limit: 250 GB</li>
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Customizable Map UI, Functions, Widgets</li>
+              </ul>
+              <a href="{% url 'subscribe_plan' %}" class="btn btn-block btn-primary text-uppercase">Sign Up for Professional</a>
+            </div>
+          </div>
+        </div>
+        <!-- Enterprise Tier -->
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title text-muted text-uppercase text-center">Enterprise</h5>
+              <h6 class="card-price text-center">$125<span class="period">/month</span></h6>
+              <hr>
+              <ul class="fa-ul">
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Multi-User Access (Up to 50 editors)</li>
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Read/Write Privileges to Spatial Database</li>
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Scale Up to 4 Geoserver Instances Across Two AZs</li>
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Suitable for Large Organizations</li>
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Vector Data Limit: 500 features</li>
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Tabular Data Limit: 500 features</li>
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Raster Data Limit: 3 TB</li>
+                <li><span class="fa-li"><i class="fas fa-check"></i></span>Customizable Map UI, Functions, Widgets</li>
+              </ul>
+            </br>
+              <a href="{% url 'subscribe_plan' %}" class="btn btn-block btn-primary text-uppercase">Sign Up for Enterprise</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</body>
+{% endblock %}

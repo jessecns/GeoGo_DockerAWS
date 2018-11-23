@@ -1,14 +1,15 @@
-<h1><strong> COMP6905 AWS/Docker Project </strong></h1>
+# COMP6905 AWS/Docker Project
 
 The following instructions describe how to successfully deploy an extended user authentication Django web application using CloudFormation stack and docker-compose script. 
 
 Alternatively, you can follow along to this youtube tutorial http://........
 
-<h2>Overview</h2>
-1. Create cloudformation stack
-2. Edit .env values
-3. Build and push docker image to DockerHub
-4. Launch docker-compose to run container on AWS 
+## Overview
+- Create cloudformation stack
+- Edit .env values
+- Build and push docker image to DockerHub
+- Launch docker-compose to run container on AWS 
+
 
 <h2>Instructions</h2>
 <h3>CloudFormation Stack</h3>

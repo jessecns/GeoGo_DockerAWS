@@ -30,7 +30,8 @@ Alternatively, you can follow along to this youtube tutorial http://........
 
 ### Docker Image and Docker Hub
 1. Open ```proj_commands.sh``` and replace all instances of ```jessecns/ggeo-django``` with ```yourdockerhubname/ggeo-django```
-2. Open ```docker-compose.yml``` and replace ```jessecns/ggeo-django``` with ```yourdockerhubname/ggeo-django```
+2. Also, replace DOCKER_HOST ip address with your EC2 ip address obtained from AWS console
+3. Open ```docker-compose.yml``` and replace ```jessecns/ggeo-django``` with ```yourdockerhubname/ggeo-django```
 3. Run docker build, docker image tag and docker image push commands
 
 ### Docker-Compose

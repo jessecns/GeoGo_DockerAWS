@@ -2,7 +2,7 @@ aws cloudformation create-stack --stack-name GGEOstack --capabilities CAPABILITY
 
 docker build -t ggeo-django .
 docker image tag ggeo-django jessecns/ggeo-django
-docker image push jessecns/ggeo-ggeo-django
+docker image push jessecns/ggeo-django
 
 export DOCKER_HOST=tcp://123.123.123.123
 docker-compose -f docker-compose.yml run djangoweb python /var/projects/compfinal/manage.py collectstatic

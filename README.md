@@ -19,7 +19,7 @@ Alternatively, you can follow along to this youtube tutorial http://........
 4. Run aws cloudformation command in ```proj_commands.sh```
 5. Once completed, open the ```Outputs``` tab on the CloudFormation page in AWS console. Save the access key id and secret access key in a text editor.
 6. Open RDS instance on console, save RDS endpoint address to text file.
-7. Open EC2 instance next, and save Public IP address and Public DNS address.
+7. Open EC2 instance next, and save Public IP address and Public DNS address to text.
 
 ### Edit .env values
 1. Open ```.env.example``` file in text editor and rename file to ```.env```

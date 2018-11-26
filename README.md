@@ -1,6 +1,6 @@
 # COMP6905 AWS/Docker Project
 
-The following instructions describe how to successfully deploy an extended user authentication Django web application using CloudFormation stack and docker-compose script. 
+The following instructions describe how to successfully deploy an extended user authentication Django web application using CloudFormation stack and docker-compose. 
 
 Alternatively, you can follow along to this youtube tutorial http://........
 

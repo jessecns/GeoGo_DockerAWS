@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 
 Description:
-  CloudFormation custom template for deployment of AWS full stack for COMP6905 Final Term Project. Resources include EC2 instances, Security Groups, RDS for MySQL, Elastic IP, AutoScaling Groups and CloudWatch
+  CloudFormation custom template for deployment of AWS full stack for COMP6905 Final Term Project. Resources include EC2 instances, Security Groups, RDS for PostgreSQL, Elastic IP, AutoScaling Groups and CloudWatch
 
 Parameters:
 

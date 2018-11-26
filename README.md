@@ -44,4 +44,4 @@ Alternatively, you can follow along to this youtube tutorial https://www.youtube
 1. Create a django superuser to access Django's admin interface:  ```docker exec -it <container id> bash```
 2. Once inside the running container type: ```python manage.py createsuperuser```
 3. Fill out usrname, email, password
-4. Access admin page and login as new superuser: "PublicDNSaddress"/admin 
+4. Access admin page and login as new superuser: <Ec2 PublicDNSaddress>/admin 

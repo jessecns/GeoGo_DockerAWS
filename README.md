@@ -2,7 +2,7 @@
 
 The following instructions describe how to successfully deploy an extended user authentication Django web application using CloudFormation stack and docker-compose. 
 
-Alternatively, you can follow along to this youtube tutorial http://........
+Alternatively, you can follow along to this youtube tutorial https://www.youtube.com/watch?v=rILgSGPpHC0&t=1643s
 
 ## Overview
 - Create cloudformation stack
